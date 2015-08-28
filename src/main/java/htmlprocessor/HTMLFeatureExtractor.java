@@ -21,36 +21,36 @@ public class HTMLFeatureExtractor {
 	// Returns the percentage of body text in doc that is emphasized
 	// (<b>, <strong>, <i>, <emph>)
 	public Double getEmphBodyTextPct(Document doc) {
-		// Get total character count
+		// Get total word count
 		String text = doc.body().text();
-		text.replaceAll(" ", "");
-		double totalChars = text.length();
+		double totalWords = 0d;
+		totalWords += text.split(" ").length;
 
 		// Get character count in emphasized tags
-		double emphChars = 0d;
+		double emphWords = 0d;
 		Elements els = doc.body().select("b,strong,i,emph");
 		for (Element e : els) {
-			emphChars += e.text().replaceAll(" ", "").length();
+			emphWords += e.text().split(" ").length;
 		}
 
-		return new Double(emphChars / totalChars);
+		return new Double(emphWords / totalWords);
 	}
 
 	// Returns the percentage of body text relative to display (headers etc..)
 	public double getBodyTextPct(Document doc) {
-		// Get total character count
+		// Get total word count
 		String text = doc.body().text();
-		text.replaceAll(" ", "");
-		double totalChars = text.length();
+		double totalWords = 0d;
+		totalWords += text.split(" ").length;
 
-		// Get character count in emphasized tags
-		double headersChars = 0d;
+		// Get word count in header tags
+		double headersWords = 0d;
 		Elements els = doc.body().select("h1,h2,h3,h4,h5,h6");
 		for (Element e : els) {
-			headersChars += e.text().replaceAll(" ", "").length();
+			headersWords += e.text().split(" ").length;
 		}
 
-		return new Double((totalChars - headersChars) / totalChars);
+		return new Double((totalWords - headersWords) / totalWords);
 	}
 
 	// Returns the amount of script files in doc
