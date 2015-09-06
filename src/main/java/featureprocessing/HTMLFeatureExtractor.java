@@ -7,6 +7,11 @@ import org.jsoup.select.Elements;
 //Extracts statistics from HTML Documents
 public class HTMLFeatureExtractor {
 
+	// Return a String representing the relevant attributes of doc
+	public static String getContentFeatureString(Document doc) {
+		return "TODO";
+	}
+
 	// Returns the word count of the body text of doc
 	public int getWordCount(Document doc) {
 		String text = doc.body().text();

@@ -5,12 +5,17 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
+import org.jsoup.nodes.Document;
 import org.sikuli.design.XYFeatureComputer;
 import org.sikuli.design.color.NamedColor;
 import org.sikuli.design.structure.Block;
 
 //Gets visual features using the sikuli packages
 public class VisualFeatureExtractor {
+
+	public static String getVisualFeatureString(String groupID) {
+		return "TODO";
+	}
 
 	public static void computeXYFeatures(String xmlFolderName) {
 		// read the folder
