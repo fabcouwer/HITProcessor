@@ -61,7 +61,8 @@ public class HITEvaluator {
 		String result = groupID + ",";
 
 		// 2. Retrieve metadata attributes for this HITgroup
-		result += MetadataExtractor.getMetaDataString(groupID);
+		// result += MetadataExtractor.getMetaDataString(groupID);
+		System.out.println(MetadataExtractor.getMetaDataString(groupID));
 
 		// 3. Retrieve the HTML page for this HITgroup
 		Document doc = null;
