@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
 import featureprocessing.HTMLFeatureExtractor;
 import featureprocessing.MetadataExtractor;
+import featureprocessing.ThroughputExtractor;
 import featureprocessing.VisualFeatureExtractor;
 
 // Main entry point for HIT evaluator
@@ -28,12 +28,12 @@ public class HITEvaluator {
 			+ "data\\HITinstances_smallset.csv";
 	public static String hitcontentLocation = "D:\\Afstuderen\\hitcontent\\hitcontent\\";
 	private static String IDfileLocation = baseDir + "\\hitgroup_ids.txt";
+	public static String screenshotFolder = baseDir + "screenshots\\";
+	public static String xmlFolder = baseDir + "xml\\";
 
 	private static ArrayList<String> groupIDs;
 
 	public static void main(String[] args) {
-
-		System.setProperty("jsse.enableSNIExtension", "false");
 
 		// 1. Fill list of IDs and prepare output list
 		groupIDs = readAcceptedIDs();
@@ -41,17 +41,18 @@ public class HITEvaluator {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("groupID,reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,amountKeywords,"
 				+ "linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,inputCount,"
-				+ "textGroupCount,imageAreaCount,visualAreaCount,textAreaCount,nonTextAreaCount,w3cPct,hsvPct,colorfulness1,colorfulness2");
+				+ "textGroupCount,imageAreaCount,visualAreaCount,textArea,nonTextArea,w3cPct,hsvAvg,colorfulness1,colorfulness2, throughput");
 
 		// 2. For each ID, evaluate that hitgroup
 		String currentResult;
+		File checkFile;
 		for (String id : groupIDs) {
 			currentResult = evaluateHITgroup(id);
 			results.add(currentResult);
 		}
 
 		// 3. Output the results to file
-		// outputToCsv(results, "test.csv");
+		outputToCsv(results, "attributes.csv");
 	}
 
 	// Evaluates features for a single HIT group
@@ -62,7 +63,9 @@ public class HITEvaluator {
 
 		// 2. Retrieve metadata attributes for this HITgroup
 		// result += MetadataExtractor.getMetaDataString(groupID);
-		System.out.println(MetadataExtractor.getMetaDataString(groupID));
+		String metaDataString = MetadataExtractor.getMetaDataString(groupID);
+		System.out.println("Metadata: " + metaDataString);
+		result += metaDataString;
 
 		// 3. Retrieve the HTML page for this HITgroup
 		Document doc = null;
@@ -74,19 +77,30 @@ public class HITEvaluator {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// 4. Retrieve content features from this
+
+		// 4. Retrieve content features from HTML
 		if (doc == null) {
 			result = "ERROR RETRIEVING HTML FOR ID " + groupID;
 		} else {
-			result += HTMLFeatureExtractor.getContentFeatureString(doc);
+			String contentString = HTMLFeatureExtractor
+					.getContentFeatureString(doc);
+			System.out.println("Content: " + contentString);
+			result += contentString;
 
 			// 5. Get visual features from the screenshot
-			result += VisualFeatureExtractor.getVisualFeatureString(groupID);
+			String visualString = VisualFeatureExtractor
+					.getVisualFeatureString(groupID);
+			System.out.println("Visual: " + visualString);
+			result += visualString;
 
-			// 6. Retrieve completion statistics from HITinstance CSV
-			// TODO
+			// 6. Retrieve throughput statistics from HITinstance CSV
+			double res = ThroughputExtractor.getThroughput(groupID);
+			System.out.println("Throughput: " + res);
+			result += res;
 
 		}
+
+		System.out.println("");
 
 		// 7. Output results as a single CSV-line
 		return result;

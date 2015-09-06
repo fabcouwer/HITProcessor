@@ -8,6 +8,9 @@ import evaluator.HITEvaluator;
 
 public class MetadataExtractor {
 
+	// Return a String representing the relevant metadata of HITgroup
+	// Format:
+	// reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,amountKeywords,
 	public static String getMetaDataString(String groupID) {
 		// 1. Get CSV line for this HITgroup
 		System.out.println("Evaluating metadata for " + groupID);
@@ -47,11 +50,17 @@ public class MetadataExtractor {
 	}
 
 	private static String getReward(String[] csvLine) {
-		return csvLine[5];
+		if (csvLine[5] == null || !csvLine[5].matches("-?\\d+(\\.\\d+)?"))
+			return "0";
+		else
+			return csvLine[5];
 	}
 
 	private static String getTimeAllotted(String[] csvLine) {
-		return csvLine[9];
+		if (csvLine[9] == null || !csvLine[9].matches("-?\\d+(\\.\\d+)?"))
+			return "0";
+		else
+			return csvLine[9];
 	}
 
 	private static int getLocation(String[] csvLine) {
