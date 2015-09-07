@@ -64,4 +64,20 @@ public class HITinstances {
 			return throughput;
 		}
 	}
+
+	public int getInitialHits() {
+		if (!this.timestamps.isEmpty()) {
+			// Get start timestamp and its amount of hits
+			Long start = this.timestamps.get(0);
+
+			for (Long current : this.timestamps) {
+				if (current < start)
+					start = current;
+			}
+
+			return this.hitsAvailable.get(start).intValue();
+		} else
+			return 0;
+
+	}
 }

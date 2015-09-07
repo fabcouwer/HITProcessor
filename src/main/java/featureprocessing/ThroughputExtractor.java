@@ -12,9 +12,9 @@ import evaluator.HITEvaluator;
 // Because the last entry in the dataset is 10:34 GMT.
 public class ThroughputExtractor {
 
-	public static double getThroughput(String groupID) {
+	public static HITinstances getInstances(String groupID) {
 		HITinstances currentHI = readInstances(groupID);
-		return currentHI.calculateThroughput();
+		return currentHI;
 	}
 
 	public static HITinstances readInstances(String groupID) {

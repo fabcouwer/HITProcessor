@@ -66,22 +66,25 @@ public class VisualFeatureExtractor {
 		try {
 			BufferedImage inputImage = ImageIO.read(new File(inputFileName));
 
-			// w3cPct,hsvAvg,colorfulness1,colorfulness2,
+			// w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2,
 
 			Double w3c = getW3Cpct(inputImage);
 
 			CvScalar hsvAvg = ColorAnalyzer
 					.computeAverageHueSaturationValue(inputImage);
 			System.out.println("CvScalar: " + hsvAvg.toString());
-			String hsvResult = hsvAvg.toString().replaceAll(",", ";");
+			// h = [0], s = [1], v = [2], and [3] is unused.
+			String[] hsvResult = hsvAvg.toString().replaceAll("[()]", "")
+					.split(",");
 
 			double colorfulness1 = ColorAnalyzer
 					.computeColorfulness(inputImage);
 			double colorfulness2 = ColorAnalyzer
 					.computeColorfulness2(inputImage);
 
-			result += w3c.toString() + "," + hsvResult + "," + colorfulness1
-					+ "," + colorfulness2 + ",";
+			result += w3c.toString() + "," + hsvResult[0] + "," + hsvResult[1]
+					+ "," + hsvResult[2] + "," + colorfulness1 + ","
+					+ colorfulness2 + ",";
 
 		} catch (Exception e) {
 			e.printStackTrace();

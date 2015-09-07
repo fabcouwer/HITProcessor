@@ -11,6 +11,7 @@ import org.jsoup.nodes.Document;
 
 import com.opencsv.CSVWriter;
 
+import entity.HITinstances;
 import featureprocessing.HTMLFeatureExtractor;
 import featureprocessing.MetadataExtractor;
 import featureprocessing.ThroughputExtractor;
@@ -41,7 +42,7 @@ public class HITEvaluator {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("groupID,reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,amountKeywords,"
 				+ "linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,inputCount,"
-				+ "textGroupCount,imageAreaCount,visualAreaCount,textArea,nonTextArea,w3cPct,hsvAvg,colorfulness1,colorfulness2, throughput");
+				+ "textGroupCount,imageAreaCount,visualAreaCount,textArea,nonTextArea,w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2, initialHits, throughput");
 
 		// 2. For each ID, evaluate that hitgroup
 		String currentResult;
@@ -94,9 +95,11 @@ public class HITEvaluator {
 			result += visualString;
 
 			// 6. Retrieve throughput statistics from HITinstance CSV
-			double res = ThroughputExtractor.getThroughput(groupID);
-			System.out.println("Throughput: " + res);
-			result += res;
+			HITinstances res = ThroughputExtractor.getInstances(groupID);
+			double throughput = res.calculateThroughput();
+			int initialHits = res.getInitialHits();
+			System.out.println("Throughput: " + throughput);
+			result += "" + initialHits + "," + throughput;
 
 		}
 
