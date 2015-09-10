@@ -26,7 +26,8 @@ public class HITinstances {
 		this.hitsAvailable.put(currentTS, hitsAvailable);
 	}
 
-	public double calculateThroughput() {
+	@Deprecated
+	public double calculateOldThroughput() {
 		if (this.timestamps.isEmpty()) {
 			return 0;
 		} else {
@@ -78,6 +79,34 @@ public class HITinstances {
 			return this.hitsAvailable.get(start).intValue();
 		} else
 			return 0;
+
+	}
+
+	// Gets the throughput of this HITgroup in the hour preceding timestamp
+	public double getThroughput(Long timestamp) {
+		// Get all timestamps of the hour before given timestamp
+		ArrayList<Long> validTimestamps = new ArrayList<Long>();
+		long difference = -1;
+		for (Long current : this.timestamps) {
+			difference = timestamp.longValue() - current.longValue();
+			// For t within the previous hour t must be 0 <= t <= 3600000
+			if (difference >= 0L && difference <= 3600000L)
+				validTimestamps.add(current);
+		}
+
+		if (validTimestamps.isEmpty()) {
+			//No measurements in this hour - return MIN_VALUE to indicate this
+			return Double.MIN_VALUE;
+		} else {
+			// Result is the combined hitsDiff for the measurements.
+			// If hitsDiff = -N, N hits were completed.
+			// So we multiply by -1 to get throughput.
+			double result = 0;
+			for (Long current : validTimestamps) {
+				result += (-1 * hitsDiff.get(current));
+			}
+			return result;
+		}
 
 	}
 }

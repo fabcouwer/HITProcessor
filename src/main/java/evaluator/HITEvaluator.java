@@ -21,7 +21,7 @@ import featureprocessing.VisualFeatureExtractor;
 public class HITEvaluator {
 
 	// REPLACE THESE if you want to run the evaluator yourself!
-	private static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset\\";
+	public static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset\\";
 	private static String targetDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset\\data\\output\\";
 	public static String HITgroupCSVLocation = baseDir
 			+ "data\\HITgroups_smallset_edited.csv";
@@ -46,7 +46,6 @@ public class HITEvaluator {
 
 		// 2. For each ID, evaluate that hitgroup
 		String currentResult;
-		File checkFile;
 		for (String id : groupIDs) {
 			currentResult = evaluateHITgroup(id);
 			results.add(currentResult);
@@ -54,6 +53,9 @@ public class HITEvaluator {
 
 		// 3. Output the results to file
 		outputToCsv(results, "attributes.csv");
+
+		// 4. Extract throughput and output
+		extractThroughput(groupIDs);
 	}
 
 	// Evaluates features for a single HIT group
@@ -94,19 +96,23 @@ public class HITEvaluator {
 			System.out.println("Visual: " + visualString);
 			result += visualString;
 
-			// 6. Retrieve throughput statistics from HITinstance CSV
-			HITinstances res = ThroughputExtractor.getInstances(groupID);
-			double throughput = res.calculateThroughput();
-			int initialHits = res.getInitialHits();
-			System.out.println("Throughput: " + throughput);
-			result += "" + initialHits + "," + throughput;
-
 		}
 
 		System.out.println("");
 
-		// 7. Output results as a single CSV-line
+		// 6. Output results as a single CSV-line
 		return result;
+	}
+
+	private static void extractThroughput(ArrayList<String> groupIDs) {
+
+		// Retrieve throughput statistics for all hitgroups
+		ArrayList<String> res = ThroughputExtractor.getThroughputData(groupIDs);
+
+		// Output to CSV
+		outputToCsv(res, "throughput_data.csv");
+		System.out.println("Wrote throughput data file.");
+
 	}
 
 	private static ArrayList<String> readAcceptedIDs() {

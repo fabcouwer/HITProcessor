@@ -32,49 +32,46 @@ public class BlockTextDetector {
 
 	public void detect() {
 
-		// if this block is a leaf, for now we don't consider at all
-		// will be removed later
-		if (block.isLeaf()) {
-			detectedPositive = false;
-		} else {
+		// Old code
+		/*
+		 * if (block.isLeaf()) { detectedPositive = false; } else {
+		 */
+		Rectangle bounds = block.getBounds();
+		Statistics stat = BlockAnalysis.computeStatistics(block);
+		List<Block> children = new ArrayList<Block>();
+		children.addAll(block.getChildren());
 
-			Rectangle bounds = block.getBounds();
-			Statistics stat = BlockAnalysis.computeStatistics(block);
-			List<Block> children = new ArrayList<Block>();
-			children.addAll(block.getChildren());
+		double ratio = (1.0 * bounds.height) / (1.0 * bounds.width);
 
-			double ratio = (1.0 * bounds.height) / (1.0 * bounds.width);
+		if (ratio < 0.5 && isReasonableToBeText(block) && stat.stdev < 0.5) {
 
-			if (ratio < 0.5 && isReasonableToBeText(block) && stat.stdev < 0.5) {
+			if (children.size() >= 5) {
+				detectedPositive = true;
+			} else if (children.size() >= 3) {
+				detectedPositive = BlockAnalysis.getAverageSpacing(children) <= 25
+						&& stat.max < 5000;
+			} else if (children.size() >= 2) {
+				boolean allChildrenOkay = true;
+				int ii = 0;
+				do {
+					allChildrenOkay = allChildrenOkay
+							&& isReasonableToBeText(children.get(ii));
+					ii++;
+				} while (allChildrenOkay && ii < children.size());
 
-				if (children.size() >= 5) {
-					detectedPositive = true;
-				} else if (children.size() >= 3) {
-					detectedPositive = BlockAnalysis
-							.getAverageSpacing(children) <= 25
-							&& stat.max < 5000;
-				} else if (children.size() >= 2) {
-					boolean allChildrenOkay = true;
-					int ii = 0;
-					do {
-						allChildrenOkay = allChildrenOkay
-								&& isReasonableToBeText(children.get(ii));
-						ii++;
-					} while (allChildrenOkay && ii < children.size());
-
-					if (allChildrenOkay) {
-						// Get the grandchildren
-						List<Block> grandChildren = new ArrayList<Block>();
-						for (Block b : children)
-							grandChildren.addAll(b.getChildren());
-						if (grandChildren.size() > 1) {
-							detectedPositive = BlockAnalysis
-									.getAverageSpacing(grandChildren) <= 15;
-						}
+				if (allChildrenOkay) {
+					// Get the grandchildren
+					List<Block> grandChildren = new ArrayList<Block>();
+					for (Block b : children)
+						grandChildren.addAll(b.getChildren());
+					if (grandChildren.size() > 1) {
+						detectedPositive = BlockAnalysis
+								.getAverageSpacing(grandChildren) <= 15;
 					}
 				}
 			}
 		}
+		// }
 
 		// re-evaluate the detection for large blocks
 		if (detectedPositive && block.getArea() > 8000

@@ -1,8 +1,11 @@
 package featureprocessing;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import entity.HITinstances;
 import evaluator.HITEvaluator;
@@ -12,9 +15,24 @@ import evaluator.HITEvaluator;
 // Because the last entry in the dataset is 10:34 GMT.
 public class ThroughputExtractor {
 
-	public static HITinstances getInstances(String groupID) {
-		HITinstances currentHI = readInstances(groupID);
-		return currentHI;
+	public static ArrayList<String> getThroughputData(ArrayList<String> groupIDs) {
+
+		ArrayList<String> result = new ArrayList<String>();
+		result.add("groupID,timestamp,throughput");
+
+		ArrayList<Long> timeStamps = readTimeStamps();
+
+		for (String groupID : groupIDs) {
+			HITinstances currentHI = readInstances(groupID);
+			for (Long ts : timeStamps) {
+				double d = currentHI.getThroughput(ts);
+				if (d > Double.MIN_VALUE) {
+					result.add(groupID + "," + ts + "," + d);
+				}
+			}
+		}
+
+		return result;
 	}
 
 	public static HITinstances readInstances(String groupID) {
@@ -47,5 +65,24 @@ public class ThroughputExtractor {
 			e.printStackTrace();
 		}
 		return currentHI;
+	}
+
+	private static ArrayList<Long> readTimeStamps() {
+		ArrayList<Long> result = new ArrayList<Long>();
+
+		// Read arrivalcompletions, returning a list of the timestamps
+		try {
+			FileReader fileReader = new FileReader(new File(
+					HITEvaluator.baseDir + "data\\timestamps_hours.txt"));
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			String line;
+			while ((line = bufferedReader.readLine()) != null) {
+				result.add(new Long(Long.parseLong(line)));
+			}
+			fileReader.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
