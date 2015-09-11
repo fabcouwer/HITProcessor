@@ -95,7 +95,7 @@ public class HITinstances {
 		}
 
 		if (validTimestamps.isEmpty()) {
-			//No measurements in this hour - return MIN_VALUE to indicate this
+			// No measurements in this hour - return MIN_VALUE to indicate this
 			return Double.MIN_VALUE;
 		} else {
 			// Result is the combined hitsDiff for the measurements.
@@ -105,6 +105,8 @@ public class HITinstances {
 			for (Long current : validTimestamps) {
 				result += (-1 * hitsDiff.get(current));
 			}
+			if (result < 0)
+				result = 0;
 			return result;
 		}
 
