@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document;
 
 import com.opencsv.CSVWriter;
 
-import entity.HITinstances;
 import featureprocessing.HTMLFeatureExtractor;
 import featureprocessing.MetadataExtractor;
 import featureprocessing.ThroughputExtractor;

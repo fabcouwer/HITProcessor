@@ -67,7 +67,7 @@ public class ThroughputExtractor {
 		return currentHI;
 	}
 
-	private static ArrayList<Long> readTimeStamps() {
+	public static ArrayList<Long> readTimeStamps() {
 		ArrayList<Long> result = new ArrayList<Long>();
 
 		// Read arrivalcompletions, returning a list of the timestamps
