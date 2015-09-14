@@ -10,16 +10,69 @@ import featureprocessing.ThroughputExtractor;
 
 public class GenerateThroughputTrainingData {
 
+	private static String header1 = "#### training ####";
+	private static String headerGeneral = "timestamp,groupID,marketTimestamp,throughput,";
+	private static String headerMarket = "hitGroupsArrived,hitGroupsCompleted,hitsAvailableUI,hitsCompleted,rewardsCompleted,rewardsArrived,hitsArrived,hitGroupsAvailableUI,";
+	private static String headerTask = "reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,"
+			+ "amountKeywords,linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,"
+			+ "inputCount,textGroupCount,imageAreaCount,visualAreaCount,w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2,initialHits";
+	private static String header3 = "#### test ####";
+
 	public static void main(String[] args) {
 
-		// 0. Result setup
-		String header1 = "#### training ####";
-		String headerGeneral = "timestamp,groupID,marketTimestamp,throughput,";
-		String headerMarket = "hitGroupsArrived,hitGroupsCompleted,hitsAvailableUI,hitsCompleted,rewardsCompleted,rewardsArrived,hitsArrived,hitGroupsAvailableUI,";
-		String headerTask = "reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,"
-				+ "amountKeywords,linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,"
-				+ "inputCount,textGroupCount,imageAreaCount,visualAreaCount,w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2,initialHits";
-		String header3 = "#### test ####";
+		// 1. Get timestamps for all 5-hour blocks
+		ArrayList<String> blocks = getTimestampBlocks();
+
+		// 2. Keep track of training and test data
+		ArrayList<String> trainingLines = new ArrayList<String>();
+		ArrayList<String> testLines = new ArrayList<String>();
+
+		trainingLines.add(headerGeneral + headerMarket + headerTask);
+		testLines.add(headerGeneral + headerMarket + headerTask);
+
+		// 3. For every timestamp past the first four, get the data
+		String[] currentBlock;
+		for (String block : blocks) {
+
+			currentBlock = block.split(";");
+
+			ArrayList<String> hitsAtTime;
+			for (int i = 0; i < 5; i++) {
+				// Data = general information, market information, HIT info
+
+				// Get HITs for the timestamp under evaluation.
+				hitsAtTime = getHITsAtTime(currentBlock[i]);
+
+				// Add market data for this hour to the basic line.
+				String timestampLine = getMarketDataStringAtTime(currentBlock[i]);
+
+				// Construct result lines for every HIT in this timestamp
+				String resultLine = "";
+				for (String hit : hitsAtTime) {
+					resultLine += currentBlock[4] + "," + hit;
+
+					String hitString = getHITstring(hit.split(",")[0]);
+					if (!hitString.isEmpty()) {
+						resultLine += "" + timestampLine + "," + hitString;
+						if (i == 4) {
+							testLines.add(resultLine);
+						} else {
+							trainingLines.add(resultLine);
+						}
+						resultLine = "";
+					}
+				}
+
+			}
+
+			// 4. Output the results to file
+			HITEvaluator.outputToCsv(trainingLines, "training.csv");
+			HITEvaluator.outputToCsv(testLines, "test.csv");
+		}
+
+	}
+
+	public static void outputSeparateFiles() {
 
 		// 1. Get timestamps for all 5-hour blocks
 		ArrayList<String> blocks = getTimestampBlocks();
@@ -67,7 +120,7 @@ public class GenerateThroughputTrainingData {
 			// Only include output with test data
 			String last = output.get(output.size() - 1);
 			if (!last.equals(header3)) {
-				HITEvaluator.outputToCsv(output, currentBlock[4] + ".csv");
+				// HITEvaluator.outputToCsv(output, currentBlock[4] + ".csv");
 				System.out.println("Wrote " + currentBlock[4] + ".csv.");
 			}
 		}
@@ -143,7 +196,7 @@ public class GenerateThroughputTrainingData {
 			// Read each line in turn
 			while ((line = reader.readLine()) != null) {
 				nextLine = line.split(",");
-				if (nextLine[0].equals(timestamp)) {
+				if (nextLine[0].contains(timestamp)) {
 					result = line.substring(line.indexOf(",")).replaceAll("\"",
 							"");
 					break;
@@ -190,6 +243,7 @@ public class GenerateThroughputTrainingData {
 		if (result.isEmpty()) {
 			return "";
 		} else
+			// System.out.println(result);
 			return result.substring(0, result.length() - 1);
 	}
 
