@@ -157,7 +157,7 @@ public class VisualFeatureExtractor {
 			// Returns
 			// 'textGroupCount,imageAreaCount,visualAreaCount,textArea,nonTextArea,'
 			result += numOfTextGroup + "," + numOfImageArea + "," + numOfLeaves
-					+ "," + textArea + "," + nonTextLeavesArea + ",";
+					+ ",";
 
 		} catch (Exception e) {
 			e.printStackTrace();

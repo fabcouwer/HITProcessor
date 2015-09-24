@@ -67,6 +67,14 @@ public class ThroughputExtractor {
 		return currentHI;
 	}
 
+	public static String getInitialHits(String groupID) {
+		HITinstances instances = readInstances(groupID);
+
+		int number = instances.getInitialHits();
+
+		return "" + number;
+	}
+
 	public static ArrayList<Long> readTimeStamps() {
 		ArrayList<Long> result = new ArrayList<Long>();
 

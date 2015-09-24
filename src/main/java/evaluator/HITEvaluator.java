@@ -20,14 +20,14 @@ import featureprocessing.VisualFeatureExtractor;
 public class HITEvaluator {
 
 	// REPLACE THESE if you want to run the evaluator yourself!
-	public static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset\\";
-	private static String targetDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset\\data\\output\\";
+	public static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset 2\\";
+	private static String targetDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\DATA\\Selected Task Dataset 2\\data\\output\\";
 	public static String HITgroupCSVLocation = baseDir
 			+ "data\\HITgroups_smallset_edited.csv";
 	public static String HITinstanceCSVLocation = baseDir
 			+ "data\\HITinstances_smallset.csv";
 	public static String hitcontentLocation = "D:\\Afstuderen\\hitcontent\\hitcontent\\";
-	private static String IDfileLocation = baseDir + "\\hitgroup_ids.txt";
+	private static String IDfileLocation = baseDir + "\\hitgroup_ids_2.txt";
 	public static String screenshotFolder = baseDir + "screenshots\\";
 	public static String xmlFolder = baseDir + "xml\\";
 
@@ -41,7 +41,7 @@ public class HITEvaluator {
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("groupID,reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,amountKeywords,"
 				+ "linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,inputCount,"
-				+ "textGroupCount,imageAreaCount,visualAreaCount,textArea,nonTextArea,w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2, initialHits, throughput");
+				+ "textGroupCount,imageAreaCount,visualAreaCount,w3cPct,hueAvg,satAvg,valAvg,colorfulness1,colorfulness2,initialHits");
 
 		// 2. For each ID, evaluate that hitgroup
 		String currentResult;
@@ -54,7 +54,7 @@ public class HITEvaluator {
 		outputToCsv(results, "attributes.csv");
 
 		// 4. Extract throughput and output
-		extractThroughput(groupIDs);
+		// extractThroughput(groupIDs);
 	}
 
 	// Evaluates features for a single HIT group
@@ -96,6 +96,8 @@ public class HITEvaluator {
 			result += visualString;
 
 		}
+
+		result += ThroughputExtractor.getInitialHits(groupID);
 
 		System.out.println("");
 
