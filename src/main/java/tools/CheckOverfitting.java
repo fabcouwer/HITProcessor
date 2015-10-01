@@ -13,7 +13,7 @@ import evaluator.HITEvaluator;
 
 public class CheckOverfitting {
 
-	private static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\Jie\\";
+	private static String baseDir = "D:\\Friso\\Dropbox\\Studie\\Afstuderen\\Jie\\62_with_zero_throughput\\";
 
 	public static void main(String[] args) {
 		ArrayList<String> testEntries = getTestEntries();
@@ -21,10 +21,10 @@ public class CheckOverfitting {
 		// Compare to training entries
 		ArrayList<String> entriesToRemove = compareTrainingWithTest(testEntries);
 
-		outputWithRemovedDuplicates("test_withsemantic.csv",
-				"test_withsemantic_pruned.csv", entriesToRemove);
-		outputWithRemovedDuplicates("training_withsemantic.csv",
-				"training_withsemantic_pruned.csv", entriesToRemove);
+		outputWithRemovedDuplicates("test62.csv",
+				"test_62_pruned.csv", entriesToRemove);
+		outputWithRemovedDuplicates("training62.csv",
+				"training_62_pruned.csv", entriesToRemove);
 	}
 
 	private static void outputWithRemovedDuplicates(String filename,
@@ -68,7 +68,7 @@ public class CheckOverfitting {
 		int foundCount = 0;
 		try {
 			FileInputStream fis = new FileInputStream(baseDir
-					+ "training_withsemantic.csv");
+					+ "training62.csv");
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					fis));
@@ -109,7 +109,7 @@ public class CheckOverfitting {
 		// Get the entries
 		try {
 			FileInputStream fis = new FileInputStream(baseDir
-					+ "test_withsemantic.csv");
+					+ "test62.csv");
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					fis));

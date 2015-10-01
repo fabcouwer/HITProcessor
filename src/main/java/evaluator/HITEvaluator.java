@@ -34,10 +34,10 @@ public class HITEvaluator {
 	private static ArrayList<String> groupIDs;
 
 	public static void main(String[] args) {
-
+		
 		// 1. Fill list of IDs and prepare output list
 		groupIDs = readAcceptedIDs();
-
+		/*
 		ArrayList<String> results = new ArrayList<String>();
 		results.add("groupID,reward,timeAllotted,location,master,totalApproved,approvalRate,titleLength,descLength,amountKeywords,"
 				+ "linkCount,wordCount,imageCount,bodyTextPct,emphTextPct,cssCount,scriptCount,inputCount,"
@@ -52,9 +52,10 @@ public class HITEvaluator {
 
 		// 3. Output the results to file
 		outputToCsv(results, "attributes.csv");
-
 		// 4. Extract throughput and output
-		// extractThroughput(groupIDs);
+		 * 
+		 */
+		extractThroughput(groupIDs);
 	}
 
 	// Evaluates features for a single HIT group

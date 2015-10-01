@@ -26,7 +26,7 @@ public class ThroughputExtractor {
 			HITinstances currentHI = readInstances(groupID);
 			for (Long ts : timeStamps) {
 				double d = currentHI.getThroughput(ts);
-				if (d > Double.MIN_VALUE) {
+				if (d != Double.MIN_VALUE) {
 					result.add(groupID + "," + ts + "," + d);
 				}
 			}

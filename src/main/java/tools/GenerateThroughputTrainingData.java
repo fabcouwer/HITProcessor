@@ -28,10 +28,10 @@ public class GenerateThroughputTrainingData {
 		ArrayList<String> trainingLines = new ArrayList<String>();
 		ArrayList<String> testLines = new ArrayList<String>();
 
-		trainingLines.add(headerGeneral + headerMarket + headerTask);
-		// + headerSemantic);
-		testLines.add(headerGeneral + headerMarket + headerTask);
-		// + headerSemantic);
+		trainingLines.add(headerGeneral + headerMarket + headerTask
+				+ headerSemantic);
+		testLines.add(headerGeneral + headerMarket + headerTask
+				+ headerSemantic);
 
 		// 3. For every timestamp past the first four, get the data
 		String[] currentBlock;
@@ -62,27 +62,28 @@ public class GenerateThroughputTrainingData {
 						resultLine += "" + timestampLine + "," + hitString;
 
 						// Get semantic features
-						// String semanticString = getSemanticString(groupID);
+						String semanticString = getSemanticString(groupID);
 
-						// if (!semanticString.isEmpty()) {
-						// resultLine += "," + semanticString;
-						if (i == 4) {
-							testLines.add(resultLine);
-						} else {
-							trainingLines.add(resultLine);
+						if (!semanticString.isEmpty()) {
+							resultLine += "," + semanticString;
+							if (i == 4) {
+								testLines.add(resultLine);
+							} else {
+								trainingLines.add(resultLine);
+							}
+							// }
+							resultLine = "";
 						}
-						// }
-						resultLine = "";
 					}
+
 				}
-
 			}
-
-			// 4. Output the results to file
-			HITEvaluator.outputToCsv(trainingLines, "training.csv");
-			HITEvaluator.outputToCsv(testLines, "test.csv");
 		}
 
+		// 4. Output the results to file
+		HITEvaluator.outputToCsv(trainingLines, "training.csv");
+		HITEvaluator.outputToCsv(testLines, "test.csv");
+		System.out.println("Done.");
 	}
 
 	public static void outputSeparateFiles() {
@@ -227,7 +228,7 @@ public class GenerateThroughputTrainingData {
 		String result = "";
 		try {
 			FileInputStream fis = new FileInputStream(HITEvaluator.baseDir
-					+ "data\\attributes_final_v2_nohead_noquote.csv");
+					+ "data\\attributes_only_reinstantiated.csv");
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					fis));
@@ -241,9 +242,8 @@ public class GenerateThroughputTrainingData {
 				// 22 (nontextarea), 30 (old throughput)
 				if (nextLine[0].equals(groupID)) {
 					for (int i = 1; i < nextLine.length; i++) {
-						if (i < 30 && i != 21 && i != 22) {
-							result += nextLine[i] + ",";
-						}
+						result += nextLine[i] + ",";
+
 					}
 					break;
 				}

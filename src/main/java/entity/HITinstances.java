@@ -9,6 +9,8 @@ public class HITinstances {
 	@SuppressWarnings("unused")
 	private String groupID;
 	private ArrayList<Long> timestamps;
+	private Long firstMeasurement;
+	private Long lastMeasurement;
 	private HashMap<Long, Integer> hitsDiff;
 	private HashMap<Long, Integer> hitsAvailable;
 
@@ -17,6 +19,8 @@ public class HITinstances {
 		timestamps = new ArrayList<Long>();
 		hitsDiff = new HashMap<Long, Integer>();
 		hitsAvailable = new HashMap<Long, Integer>();
+		firstMeasurement = Long.MAX_VALUE;
+		lastMeasurement = Long.MIN_VALUE;
 	}
 
 	public void addTimestamp(long timestamp, int hitsDiff, int hitsAvailable) {
@@ -24,6 +28,11 @@ public class HITinstances {
 		this.timestamps.add(currentTS);
 		this.hitsDiff.put(currentTS, hitsDiff);
 		this.hitsAvailable.put(currentTS, hitsAvailable);
+
+		if (timestamp < firstMeasurement)
+			firstMeasurement = timestamp;
+		if (timestamp > lastMeasurement)
+			lastMeasurement = timestamp;
 	}
 
 	@Deprecated
@@ -95,8 +104,12 @@ public class HITinstances {
 		}
 
 		if (validTimestamps.isEmpty()) {
-			// No measurements in this hour - return MIN_VALUE to indicate this
-			return Double.MIN_VALUE;
+			// No measurements in this hour - check if it falls into our
+			// measurement range
+			if (firstMeasurement < timestamp && timestamp < lastMeasurement)
+				return 0;
+			else
+				return Double.MIN_VALUE;
 		} else {
 			// Result is the combined hitsDiff for the measurements.
 			// If hitsDiff = -N, N hits were completed.
